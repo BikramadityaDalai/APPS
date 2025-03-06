@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(-45deg, #ffcc00, #ff66cc, #6699ff, #99ff66);
+        background-size: 400% 400%;
+        animation: gradientAnimation 15s ease infinite;
+        color: #fff;
+    }
+
+    @keyframes gradientAnimation {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    h1 {
+        color: #fff;
+    }
+    .board {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .cell {
+        width: 100px;
+        height: 100px;
+        border: 2px solid #fff;
+        font-size: 48px;
+        cursor: pointer;
+        background-color: rgba(255, 255, 255, 0.3);
+        transition: background-color 0.3s;
+    }
+    .cell:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+    #status {
+        margin-top: 20px;
+        font-size: 24px;
+        color: #fff;
+    }
+    button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .low{
+        color:#262525;
+        
+    }
+</style>
+</head>
+<body>
+
+<h1>Tic Tac Toe</h1>
+<div id="status">Current Player: X</div>
+
+<div class="board">
+    <div>
+        <div class="cell" onclick="makeMove(0, 0)"></div>
+        <div class="cell" onclick="makeMove(0, 1)"></div>
+        <div class="cell" onclick="makeMove(0, 2)"></div>
+    </div>
+    <br>
+    <div>
+        <div class="cell" onclick="makeMove(1, 0)"></div>
+        <div class="cell" onclick="makeMove(1, 1)"></div>
+        <div class="cell" onclick="makeMove(1, 2)"></div>
+
+    </div>
+    
+    <br>
+    <div>
+        <div class="cell" onclick="makeMove(2, 0)"></div>
+        <div class="cell" onclick="makeMove(2, 1)"></div>
+        <div class="cell" onclick="makeMove(2, 2)"></div>
+    </div>
+    
+</div>
+
+<div>
+    <button onclick="resetBoard()">Reset Game</button>
+    <button onclick="setDifficulty('easy')">Easy/Two Player</button>
+    <button onclick="setDifficulty('medium')">Medium</button>
+    <button onclick="setDifficulty('hard')">Hard</button>
+</div>
+<br><br><br><br><br><br>
+<footer><marquee  direction="right" class="low"><h5>Bikram Private limited</h5></marquee></footer>
+<script>
+    let currentPlayer = 'X';
+    let board = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+    ];
+    let difficulty = 'medium';
+
+    function makeMove(row, col) {
+        if (board[row][col] === '' && !checkWinner() && !checkDraw()) {
+            board[row][col] = currentPlayer;
+            renderBoard();
+            if (checkWinner()) {
+                document.getElementById('status').textContent = currentPlayer + " wins!";
+            } else if (checkDraw()) {
+                document.getElementById('status').textContent = "It's a draw!";
+            } else {
+                switchPlayer();
+                if (currentPlayer === 'O' && difficulty !== 'easy') {
+                    makeAIMove();
+                }
+            }
+        }
+    }
+
+    function renderBoard() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell, index) => {
+            const row = Math.floor(index / 3);
+            const col = index % 3;
+            cell.textContent = board[row][col];
+        });
+    }
+
+    function checkWinner() {
+        for (let i = 0; i < 3; i++) {
+            if (board[i][0] !== '' && board[i][0] === board[i][1] && board[i][0] === board[i][2]) {
+                return true;
+            }
+            if (board[0][i] !== '' && board[0][i] === board[1][i] && board[0][i] === board[2][i]) {
+                return true;
+            }
+        }
+        if (board[0][0] !== '' && board[0][0] === board[1][1] && board[0][0] === board[2][2]) {
+            return true;
+        }
+        if (board[0][2] !== '' && board[0][2] === board[1][1] && board[0][2] === board[2][0]) {
+            return true;
+        }
+        return false;
+    }
+
+    function checkDraw() {
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === '') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function switchPlayer() {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        document.getElementById('status').textContent = "Current Player: " + currentPlayer;
+    }
+
+    function resetBoard() {
+        currentPlayer = 'X';
+        board = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
+        renderBoard();
+        document.getElementById('status').textContent = "Current Player: " + currentPlayer;
+    }
+
+    function makeAIMove() {
+        if (difficulty === 'easy') {
+            makeRandomMove();
+        } else if (difficulty === 'medium') {
+            makeMediumMove();
+        } else if (difficulty === 'hard') {
+            makeHardMove();
+        }
+        renderBoard();
+        if (checkWinner()) {
+            document.getElementById('status').textContent = currentPlayer + " wins!";
+        } else if (checkDraw()) {
+            document.getElementById('status').textContent = "It's a draw!";
+        } else {
+            switchPlayer();
+        }
+    }
+
+    function makeRandomMove() {
+        let emptyCells = [];
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === '') {
+                    emptyCells.push({ row, col });
+                }
+            }
+        }
+        const randomIndex = Math.floor(Math.random() * emptyCells.length);
+        const { row, col } = emptyCells[randomIndex];
+        board[row][col] = currentPlayer;
+    }
+
+    function makeMediumMove() {
+        // Check for potential winning moves
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === '') {
+                    board[row][col] = currentPlayer;
+                    if (checkWinner()) {
+                        return;
+                    }
+                    board[row][col] = '';
+                }
+            }
+        }
+        // Check for potential blocking moves
+        switchPlayer();
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === '') {
+                    board[row][col] = currentPlayer;
+                    if (checkWinner()) {
+                        board[row][col] = 'O'; // AI blocks the winning move
+                        switchPlayer();
+                        return;
+                    }
+                    board[row][col] = '';
+                }
+            }
+        }
+        switchPlayer();
+        makeRandomMove();
+    }
+
+    function makeHardMove() {
+        const bestMove = getBestMove(board, 'O');
+        board[bestMove.row][bestMove.col] = 'O';
+    }
+
+    function getBestMove(board, player) {
+        let bestMove = { score: -Infinity };
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col] === '') {
+                    board[row][col] = player;
+                    const score = minimax(board, 0, false);
+                    board[row][col] = '';
+                    if (score > bestMove.score) {
+                        bestMove = { row, col, score };
+                    }
+                }
+            }
+        }
+        return bestMove;
+    }
+
+    function minimax(board, depth, isMaximizing) {
+        if (checkWinner()) {
+            return isMaximizing ? -10 + depth : 10 - depth;
+        } else if (checkDraw()) {
+            return 0;
+        }
+
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (board[row][col] === '') {
+                        board[row][col] = 'O';
+                        const score = minimax(board, depth + 1, false);
+                        board[row][col] = '';
+                        bestScore = Math.max(bestScore, score);
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (board[row][col] === '') {
+                        board[row][col] = 'X';
+                        const score = minimax(board, depth + 1, true);
+                        board[row][col] = '';
+                        bestScore = Math.min(bestScore, score);
+                    }
+                }
+            }
+            return bestScore;
+        }
+    }
+
+    function setDifficulty(level) {
+        difficulty = level;
+        resetBoard();
+        if (currentPlayer === 'O' && difficulty !== 'easy') {
+            makeAIMove();
+        }
+    }
+
+    renderBoard();
+</script>
+
+</body>
+</html>
