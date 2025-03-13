@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="test.css">
+</head>
+<body>
+    
+
+    <div class="quiz-container">
+        <h1>Quiz App</h1>
+        <p id="question"></p>
+        <ul id="answer-list">
+            <!-- Answer options will be injected here -->
+            <div>
+                <input type="radio" id="ans1" class="options" name="option" value="0">
+                <label for="ans1" id="opt1">option1</label>
+            </div>
+            <div>
+                <input type="radio" id="ans2" class="options" name="option" value="1">
+                <label for="ans2" id="opt2">option2</label>
+            </div>
+            <div>
+                <input type="radio" id="ans3" class="options" name="option" value="2">
+                <label for="ans3" id="opt3">option3</label>
+            </div>
+            <div>
+                <input type="radio" id="ans4" class="options" name="option" value="3">
+                <label for="ans4" id="opt4">option4</label>
+            </div>
+        </ul>
+        <button id="submit">Submit</button>
+        <button id="next">Next</button>
+    </div>
+
+    <!-- Link to JavaScript file -->
+    <script src="script.js"></script>  <!-- Ensure 'script.js' is in the same directory as this HTML file -->
+</body>
+</html>
