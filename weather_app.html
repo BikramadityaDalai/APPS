@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather App (WeatherAPI.com)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .weather-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 80%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #66a6ff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #558de8;
+    }
+    .result {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-box">
+    <h2>Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city" />
+    <button onclick="getWeather()">Get Weather</button>
+    <div class="result" id="result"></div>
+  </div>
+  
+  <script>
+    const API_KEY = 'f0aa00597bff4faa925170916251508';
+    
+    async function getWeather() {
+      const city = document.getElementById('city').value.trim();
+      const resultDiv = document.getElementById('result');
+      if (!city) {
+        resultDiv.innerHTML = '<p>Please enter a city name.</p>';
+        return;
+      }
+
+      try {
+        const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${city}&aqi=yes`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('City not found or API error');
+        const data = await response.json();
+
+        const location = data.location.name + ', ' + data.location.country;
+        const temp = data.current.temp_c;
+        const condition = data.current.condition.text;
+        const icon = data.current.condition.icon;
+        const humidity = data.current.humidity;
+        const wind = data.current.wind_kph;
+        const aqi = data.current.air_quality["pm2_5"] ? data.current.air_quality["pm2_5"].toFixed(1) : 'N/A';
+
+        resultDiv.innerHTML = `
+          <h3>${location}</h3>
+          <img src="https:${icon}" alt="weather icon">
+          <p><strong>${temp}°C</strong> - ${condition}</p>
+          <p>Humidity: ${humidity}%</p>
+          <p>Wind: ${wind} kph</p>
+          <p>PM2.5 AQI: ${aqi}</p>
+        `;
+      } catch (err) {
+        resultDiv.innerHTML = `<p style="color:red;">${err.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
