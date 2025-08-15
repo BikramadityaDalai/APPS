@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to top, #83a4d4, #b6fbff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .weather-card {
+      background: #ffffffcc;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .weather-card h1 {
+      margin: 10px 0;
+      font-size: 2.5rem;
+    }
+    .weather-card h2 {
+      margin: 5px 0;
+      font-size: 1.2rem;
+      color: #555;
+    }
+    .details {
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input {
+      width: 60%;
+      margin-right: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0077ff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005dd1;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-card">
+    <input type="text" id="cityInput" placeholder="Enter city">
+    <button onclick="getWeather()">Get Weather</button>
+    <h1 id="temp">--°C</h1>
+    <h2 id="condition">Condition</h2>
+    <div class="details" id="details">Humidity: --% | Wind: -- kph</div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById('cityInput').value;
+      const apiKey = 'f0aa00597bff4faa925170916251508';
+      const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`;
+      
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.error) {
+          alert('City not found!');
+          return;
+        }
+        document.getElementById('temp').innerText = data.current.temp_c + '°C';
+        document.getElementById('condition').innerText = data.current.condition.text;
+        document.getElementById('details').innerText = 
+          'Humidity: ' + data.current.humidity + '% | Wind: ' + data.current.wind_kph + ' kph';
+      } catch (error) {
+        alert('Error fetching data.');
+      }
+    }
+  </script>
+</body>
+</html>
